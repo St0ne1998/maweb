@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaWebs: Multi-Tenant Enterprise Control System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+          --pri-900: oklch(18% 0.07 240);
+          --pri-800: oklch(24% 0.09 240);
+          --pri-700: oklch(32% 0.12 238);
+          --pri-600: oklch(40% 0.15 236);
+          --pri-500: oklch(50% 0.17 234);
+          --pri-300: oklch(72% 0.10 230);
+          --pri-50: oklch(97% 0.01 232);
+
+          --acc-500: oklch(72% 0.18 58);
+          --acc-400: oklch(78% 0.15 56);
+
+          --n-900: oklch(18% 0.008 240);
+          --n-600: oklch(48% 0.006 240);
+          --n-200: oklch(92% 0.004 240);
+          --n-100: oklch(96% 0.003 240);
+          --n-50: oklch(98.5% 0.002 240);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          background: var(--n-50);
+          color: var(--n-900);
+          line-height: 1.6;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation */
+        nav {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px 40px;
+          max-width: 1280px;
+          margin: 0 auto;
+        }
+
+        .logo {
+          font-size: 20px;
+          font-weight: 900;
+          letter-spacing: -0.03em;
+          color: var(--pri-700);
+        }
+
+        .nav-links {
+          display: flex;
+          gap: 32px;
+          list-style: none;
+        }
+
+        .nav-links a {
+          color: var(--n-600);
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 500;
+          transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--pri-600); }
+
+        .nav-auth-buttons {
+          display: flex;
+          gap: 12px;
+        }
+
+        .nav-login-btn {
+          background: transparent;
+          color: var(--pri-700);
+          border: 1px solid var(--pri-300);
+          padding: 8px 16px;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          font-size: 14px;
+          transition: all 0.2s;
+        }
+        .nav-login-btn:hover { background: var(--pri-50); }
+
+        .nav-cta {
+          background: linear-gradient(135deg, var(--acc-500), var(--acc-400));
+          color: white;
+          border: none;
+          padding: 9px 18px;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          font-size: 14px;
+        }
+
+        /* Hero */
+        .hero {
+          padding: 80px 40px;
+          max-width: 1280px;
+          margin: 0 auto;
+          text-align: center;
+        }
+
+        h1 {
+          font-size: clamp(2.5rem, 5vw, 4rem);
+          font-weight: 900;
+          letter-spacing: -0.04em;
+          margin-bottom: 20px;
+          line-height: 1.1;
+          color: var(--pri-900);
+        }
+
+        .hero p {
+          font-size: 18px;
+          color: var(--n-600);
+          max-width: 58ch;
+          margin: 0 auto 32px;
+          line-height: 1.7;
+        }
+
+        .hero-buttons {
+          display: flex;
+          gap: 16px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, var(--acc-500), var(--acc-400));
+          color: white;
+          border: none;
+          padding: 16px 32px;
+          border-radius: 10px;
+          font-weight: 700;
+          font-size: 16px;
+          cursor: pointer;
+          box-shadow: 0 4px 20px oklch(72% 0.18 58 / 0.2);
+        }
+
+        .btn-secondary {
+          background: var(--n-50);
+          color: var(--pri-700);
+          border: 2px solid var(--pri-300);
+          padding: 14px 30px;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 16px;
+          cursor: pointer;
+          font-family: inherit;
+        }
+
+        /* Pricing & Plans Section */
+        .section { padding: 80px 40px; max-width: 1280px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 64px; }
+        .section-header h2 { font-size: 2.5rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; color: var(--pri-900); }
+        .section-header p { font-size: 18px; color: var(--n-600); max-width: 58ch; margin: 0 auto; }
+
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+        .pricing-card { background: white; border: 1px solid var(--n-200); border-radius: 20px; padding: 40px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .pricing-card.popular { border: 2px solid var(--acc-500); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .popular-badge { position: absolute; top: -14px; right: 32px; background: var(--acc-500); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+        .feature-card { padding: 32px; border-radius: 16px; background: white; border: 1px solid var(--n-200); }
+        .feature-icon { font-size: 32px; margin-bottom: 16px; }
+        .feature-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--pri-900); }
+        .feature-card p { font-size: 14px; color: var(--n-600); line-height: 1.6; }
+
+        footer { border-top: 1px solid var(--n-200); padding: 48px 40px; background: var(--n-50); }
+        .footer-content { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 48px; text-align: center; }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(11, 15, 25, 0.65); backdrop-filter: blur(4px);
+            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .auth-card {
+            background: white; border: 1px solid var(--n-200); border-radius: 20px;
+            max-width: 480px; width: 100%; padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .auth-close {
+            position: absolute; top: 20px; right: 20px; background: var(--n-100); border: none;
+            width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--n-600);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .auth-tabs { display: flex; border-bottom: 1px solid var(--n-200); margin-bottom: 24px; gap: 24px; }
+        .auth-tab { background: none; border: none; font-size: 15px; font-weight: 600; color: var(--n-400); padding-bottom: 10px; cursor: pointer; position: relative; }
+        .auth-tab.active { color: var(--pri-900); }
+        .auth-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--pri-900); }
+
+        .auth-form { display: none; flex-direction: column; gap: 14px; }
+        .auth-form.active { display: flex; }
+
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--n-600); letter-spacing: 0.05em; }
+        .input-group input, .input-group select {
+            background: var(--n-50); border: 1px solid var(--n-200); padding: 11px 14px;
+            border-radius: 10px; font-size: 14px; color: var(--n-900); font-family: inherit; outline: none;
+        }
+        .auth-submit-btn {
+            background: var(--pri-900); color: white; border: none; padding: 14px;
+            border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 6px;
+        }
+
+        .popia-box {
+            background: var(--n-50); border: 1px solid var(--n-200); padding: 12px; border-radius: 8px; font-size: 12px; color: var(--n-600);
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .popia-box input { margin-top: 2px; }
+
+        /* ADMIN DASHBOARD VIEW */
+        #adminDashboardView { display: none; min-height: 100vh; background: var(--n-50); }
+        .admin-header {
+            background: white; border-bottom: 1px solid var(--n-200); padding: 16px 32px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .admin-main { max-width: 1280px; margin: 0 auto; padding: 32px 20px; }
+        
+        .dashboard-grid-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        @media(max-width: 900px) { .dashboard-grid-top { grid-template-columns: 1fr; } }
+
+        .card-box {
+            background: white; border: 1px solid var(--n-200); border-radius: 16px; padding: 24px;
+        }
+        .card-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--pri-900); display: flex; align-items: center; gap: 8px; }
+
+        .circle-metrics { display: flex; justify-content: space-around; align-items: center; padding: 10px 0; }
+        .circle-progress-item { text-align: center; }
+        .circle-chart {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: conic-gradient(var(--acc-500) 0% 100%, var(--n-200) 100% 100%);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; margin: 0 auto 10px;
+        }
+        .circle-chart::after {
+            content: ''; width: 72px; height: 72px; background: white; border-radius: 50%; position: absolute;
+        }
+        .circle-val { position: relative; z-index: 2; font-weight: 800; font-size: 15px; color: var(--pri-900); }
+
+        .websites-section { background: white; border: 1px solid var(--n-200); border-radius: 16px; padding: 24px; margin-bottom: 32px; }
+        .websites-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        .add-site-btn {
+            background: var(--acc-500); color: white; border: none; padding: 10px 16px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;
+        }
+        .website-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px; border: 1px solid var(--n-200); border-radius: 10px; margin-bottom: 12px; background: var(--n-50); flex-wrap: wrap; gap: 12px;
+        }
+
+        .site-tabs { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--n-200); padding-bottom: 12px; overflow-x: auto; }
+        .site-tab-btn {
+            background: var(--n-100); border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; color: var(--n-600); cursor: pointer; white-space: nowrap;
+        }
+        .site-tab-btn.active { background: var(--pri-900); color: white; }
+
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        /* PayFast / PayGate Simulated Modal */
+        .pay-modal {
+            position: fixed; inset: 0; background: rgba(11, 15, 25, 0.7); backdrop-filter: blur(4px);
+            z-index: 1100; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .pay-modal.active { display: flex; }
+        .pay-card { background: white; border-radius: 20px; max-width: 440px; width: 100%; padding: 32px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); text-align: left; }
+    </style>
+</head>
+<body>
+
+    <!-- LANDING PAGE VIEW -->
+    <div id="landingPageView">
+        <nav>
+            <div class="logo">MaWebs Enterprise</div>
+            <ul class="nav-links">
+                <li><a href="#features">Architecture</a></li>
+                <li><a href="#pricing">Plans & Pricing</a></li>
+            </ul>
+            <div class="nav-auth-buttons">
+                <button class="nav-login-btn" onclick="openAuthModal('login')">Sign In</button>
+                <button class="nav-cta" onclick="openAuthModal('signup')">Get Started</button>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <h1>Multi-Tenant Enterprise Control System & Vendor Hub</h1>
+            <p>Start with zero websites, plug in your own stores, automate WhatsApp invoicing, and manage multi-tenant database partitions securely.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="openAuthModal('signup')">Create Business Account</button>
+                <button class="btn-secondary" onclick="openAuthModal('login')">Sign In to Dashboard</button>
+            </div>
+        </section>
+
+        <!-- PLANS & PRICING SECTION RESTORED -->
+        <section id="pricing" class="section">
+            <div class="section-header">
+                <h2>Transparent Subscription & Domain Plans</h2>
+                <p>Every account starts completely fresh with zero websites included free. Scale seamlessly with our simulated PayFast paygate.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--pri-900); margin-bottom: 8px;">Starter Tenant</h3>
+                        <p style="font-size: 14px; color: var(--n-600); margin-bottom: 24px;">Ideal for testing single e-commerce setups.</p>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--pri-900); margin-bottom: 24px;">R 0 <span style="font-size: 14px; font-weight: 500; color: var(--n-600);">/ first store free</span></div>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--n-600); margin-bottom: 32px;">
+                            <li><i class="fa-solid fa-check" style="color:var(--acc-500); margin-right:8px;"></i> Zero websites to start</li>
+                            <li><i class="fa-solid fa-check" style="color:var(--acc-500); margin-right:8px;"></i> 1 Free custom website slot</li>
+                            <li><i class="fa-solid fa-check" style="color:var(--acc-500); margin-right:8px;"></i> Basic financial reporting</li>
+                            <li><i class="fa-solid fa-check" style="color:var(--acc-500); margin-right:8px;"></i> WhatsApp Invoice generator</li>
+                        </ul>
+                    </div>
+                    <button class="btn-secondary" onclick="openAuthModal('signup')" style="width: 100%; text-align: center;">Get Started Free</button>
+                </div>
+
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div>
+                        <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--pri-900); margin-bottom: 8px;">Growth Multi-Vendor</h3>
+                        <p style="font-size: 14px; color: var(--n-600); margin-bottom: 24px;">For agencies and growing multi-store owners.</p>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--pri-900); margin-bottom: 24px;">R 50 <span style="font-size: 14px; font-weight: 500; color: var(--n-600);">/ extra domain slot</span></div>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--n-600); margin-bottom: 32px;">
+                            <li><i class="fa-solid fa-check" style="color:var(--acc-500); margin-right:8px;"></i> Add unlimited extra websites</li>
+                            <li><i class="fa-solid fa-check" style="color:var(--acc-500); margin-right:8px;"></i> PayFast simulated verification</li>
+                            <li><i class="fa-solid fa-check" style="color:var(--acc-500); margin-right:8px;"></i> Full individual store dashboard</li>
+                            <li><i class="fa-solid fa-check" style="color:var(--acc-500); margin-right:8px;"></i> Employee RBAC boundaries</li>
+                        </ul>
+                    </div>
+                    <button class="btn-primary" onclick="openAuthModal('signup')" style="width: 100%; text-align: center;">Deploy Store Now</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="section" style="background: white;">
+            <div class="section-header">
+                <h2>Advanced Architectural Capabilities</h2>
+                <p>Engineered for high data integrity, strict multi-tenancy, and real-time offline-first sync operations.</p>
+            </div>
+            <div class="grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>3-Tier Role-Based Access</h3>
+                    <p>Strict separation between Master Admins, restricted Staff Employees, and single-view Marketplace Vendors.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏢</div>
+                    <h3>Multi-Tenant Architecture</h3>
+                    <p>Complete logical isolation of business databases, security keys, financial logs, and inventory records.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3>PayFast Gateway Simulation</h3>
+                    <p>Seamless secure checkout integration for adding extra domains beyond your initial zero-website startup.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <div>
+                    <h4>MaWebs Enterprise Core</h4>
+                    <p style="font-size:13px; color:var(--n-600); margin-top:8px;">Designed for South African multi-vendor marketplaces and e-commerce stores.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div id="authModalOverlay" class="modal-overlay">
+        <div class="auth-card">
+            <button class="auth-close" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabSignupBtn" onclick="switchAuthTab('signup')">Register Owner</button>
+                <button class="auth-tab" id="tabLoginBtn" onclick="switchAuthTab('login')">Sign In</button>
+            </div>
+
+            <!-- Sign Up Form -->
+            <form id="signupForm" class="auth-form active" onsubmit="handleSignup(event)">
+                <div class="input-group">
+                    <label>Full Name / Business Name</label>
+                    <input type="text" id="suName" required placeholder="Khreor Fashion Owner">
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="suEmail" required placeholder="admin@khreorfashion.co.za">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="suPassword" required placeholder="••••••••">
+                </div>
+                <div class="input-group">
+                    <label>Select User Tier (Access Role)</label>
+                    <select id="suTier" required>
+                        <option value="master">Tier 1: Master Admin (Full Business Owner)</option>
+                        <option value="employee">Tier 2: Employee (Restricted Staff)</option>
+                        <option value="vendor">Tier 3: Marketplace Vendor (Single View)</option>
+                    </select>
+                </div>
+                <div class="popia-box">
+                    <input type="checkbox" id="popiaConsent" required>
+                    <label for="popiaConsent" style="font-size:11px; color:var(--n-600); text-transform:none; font-weight:normal;">
+                        I agree to the <strong>POPIA Privacy Policy</strong> and consent to timestamp & IP logging for secure multi-tenant database synchronization.
+                    </label>
+                </div>
+                <button type="submit" class="auth-submit-btn">Complete Secure Registration</button>
+            </form>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="liEmail" required placeholder="admin@khreorfashion.co.za">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="liPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="auth-submit-btn">Authenticate & Access Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FAKE PAYGATE / PAYFAST MODAL -->
+    <div id="payModalOverlay" class="pay-modal">
+        <div class="pay-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--n-200); padding-bottom: 12px;">
+                <div>
+                    <strong style="color: var(--pri-900); font-size: 16px;">PayFast Secure Gateway</strong>
+                    <div style="font-size: 11px; color: var(--n-600);">Live Sandbox Mode (ZAR)</div>
+                </div>
+                <i class="fa-solid fa-lock" style="color: oklch(50% 0.17 150); font-size: 20px;"></i>
+            </div>
+            <div style="background: var(--n-50); padding: 16px; border-radius: 10px; border: 1px solid var(--n-200); margin-bottom: 20px; font-size: 13px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Merchant:</span> <strong>MaWebs SaaS Ltd</strong></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Item:</span> <strong>Extra Domain Slot</strong></div>
+                <div style="display:flex; justify-content:space-between; border-top:1px solid var(--n-200); pt:6px; margin-top:6px; font-weight:700;"><span>Total Amount:</span> <span style="color:var(--pri-700);">R 50.00</span></div>
+            </div>
+            <div class="input-group" style="margin-bottom: 12px;">
+                <label>Card Number (Simulation)</label>
+                <input type="text" value="4111 2222 3333 4444" readonly style="background:var(--n-100); color:var(--n-600);">
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button onclick="closePayModal()" style="flex: 1; padding: 12px; background: var(--n-100); border: 1px solid var(--n-200); border-radius: 8px; font-weight: 600; cursor: pointer;">Cancel</button>
+                <button onclick="confirmWebsitePayment()" style="flex: 1; padding: 12px; background: oklch(50% 0.17 150); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Pay R 50.00 Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD VIEW -->
+    <div id="adminDashboardView">
+        <header class="admin-header">
+            <div class="logo">MaWebs Control Center</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <span id="userRoleBadge" style="font-size: 11px; background: var(--n-100); color: var(--pri-800); padding: 4px 10px; border-radius: 6px; font-weight: 700;"></span>
+                <span id="userGreetingDisplay" style="font-size: 13px; font-weight: 600; color: var(--n-600);"></span>
+                <button class="nav-login-btn" onclick="logoutAdmin()">Sign Out</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <!-- MASTER ADMIN CONTAINER -->
+            <div id="masterAdminContainer">
+                <div class="dashboard-grid-top">
+                    <div class="card-box">
+                        <h3><i class="fa-solid fa-clipboard-check" style="color:var(--acc-500);"></i> System Partition Status</h3>
+                        <p style="font-size: 13px; color: var(--n-600); margin-bottom: 16px;">Multi-tenant database isolation active. Your account starts with zero websites until you add your custom stores.</p>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 10px; background: var(--n-50); border-radius: 8px;">
+                                <span>Multi-Tenant DB Isolation</span>
+                                <strong style="color: oklch(40% 0.15 150);">Active (Logical Partitioning)</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 10px; background: var(--n-50); border-radius: 8px;">
+                                <span>Registered Domain Slots</span>
+                                <strong id="domainCountDisplay" style="color: var(--pri-700);">0 Connected</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-box">
+                        <h3><i class="fa-solid fa-chart-pie" style="color:var(--acc-500);"></i> Circle Analytics</h3>
+                        <div class="circle-metrics">
+                            <div class="circle-progress-item">
+                                <div class="circle-chart">
+                                    <div class="circle-val">100%</div>
+                                </div>
+                                <span style="font-size: 12px; font-weight: 600; color: var(--n-600);">Isolation Health</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Websites Management -->
+                <div class="websites-section">
+                    <div class="websites-top">
+                        <div>
+                            <h3>Connected Websites & Platforms</h3>
+                            <p style="font-size:13px; color:var(--n-600);">Start with zero websites. Add your first website free. Subsequent websites require a R 50.00 PayFast verification fee.</p>
+                        </div>
+                        <button class="add-site-btn" onclick="handleAddWebsiteClick()"><i class="fa-solid fa-plus"></i> Add Website</button>
+                    </div>
+                    <div id="websitesListContainer"></div>
+                </div>
+
+                <!-- DEDICATED WEBSITE VIEW CONTAINER (FULLY VIEWABLE DASHBOARD FOR ADDED WEBSITES) -->
+                <div id="dedicatedWebsiteSection" class="card-box" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 id="activeWebsiteTitleLabel">Store View</h3>
+                        <button onclick="closeDedicatedView()" style="background: var(--n-100); border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600;">← Back to All Websites</button>
+                    </div>
+
+                    <div class="site-tabs">
+                        <button class="site-tab-btn active" onclick="switchSiteTab('financial', event)">1. Financial Dashboard</button>
+                        <button class="site-tab-btn" onclick="switchSiteTab('orders', event)">2. Order Management</button>
+                        <button class="site-tab-btn" onclick="switchSiteTab('approval', event)">3. Approval Queue (Print)</button>
+                        <button class="site-tab-btn" onclick="switchSiteTab('invoice', event)">4. PDF & WhatsApp Invoice Generator</button>
+                        <button class="site-tab-btn" onclick="switchSiteTab('rbac', event)">5. Employee RBAC Settings</button>
+                    </div>
+
+                    <!-- TAB 1: FINANCIAL DASHBOARD -->
+                    <div id="paneFinancial" class="tab-pane active">
+                        <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--pri-900);">Gateway API Financial Summary (ZAR Rounded)</h4>
+                        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                            <div style="background: var(--n-50); padding: 16px; border-radius: 10px; border: 1px solid var(--n-200);">
+                                <div style="font-size: 11px; color: var(--n-600); text-transform: uppercase;">Gross Sales</div>
+                                <div style="font-size: 22px; font-weight: 800; color: var(--pri-900);">R 12,450.00</div>
+                            </div>
+                            <div style="background: var(--n-50); padding: 16px; border-radius: 10px; border: 1px solid var(--n-200);">
+                                <div style="font-size: 11px; color: var(--n-600); text-transform: uppercase;">15% Platform Commission</div>
+                                <div style="font-size: 22px; font-weight: 800; color: oklch(40% 0.15 150);">R 1,867.50</div>
+                            </div>
+                            <div style="background: var(--n-50); padding: 16px; border-radius: 10px; border: 1px solid var(--n-200);">
+                                <div style="font-size: 11px; color: var(--n-600); text-transform: uppercase;">Net Income (After Fees)</div>
+                                <div style="font-size: 22px; font-weight: 800; color: var(--pri-700);">R 10,582.50</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: ORDER MANAGEMENT -->
+                    <div id="paneOrders" class="tab-pane">
+                        <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--pri-900);">Live Order Feed & Status Sync</h4>
+                        <div style="background: var(--n-50); padding: 16px; border-radius: 10px; border: 1px solid var(--n-200); display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong>Order #1042 - Custom Branding Bundle</strong>
+                                <div style="font-size:12px; color:var(--n-600);">Customer: Sipho Dlamini | Paid via PayFast</div>
+                            </div>
+                            <span style="font-size:11px; background:oklch(90% 0.05 150); color:oklch(40% 0.15 150); padding:4px 8px; border-radius:6px; font-weight:600;">Fulfilled</span>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: APPROVAL QUEUE -->
+                    <div id="paneApproval" class="tab-pane">
+                        <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--pri-900);">Vendor Product Approval Queue</h4>
+                        <div style="background: var(--n-50); padding: 16px; border-radius: 10px; border: 1px solid var(--n-200); display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong>Item: Premium Leather Handbag</strong>
+                                <div style="font-size:12px; color:var(--n-600);">Vendor: Khreor Accessories | Price: R 850.00</div>
+                            </div>
+                            <button onclick="alert('Product approved and pushed live to catalog!')" style="background:var(--acc-500); color:white; border:none; padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;">Approve & Publish</button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: INVOICE GENERATOR -->
+                    <div id="paneInvoice" class="tab-pane">
+                        <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--pri-900);">Manual Custom Invoice Generator (WhatsApp & PDF Engine)</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                            <div class="input-group">
+                                <label>Customer Name</label>
+                                <input type="text" id="invCustomer" placeholder="Sipho Dlamini">
+                            </div>
+                            <div class="input-group">
+                                <label>Customer Email</label>
+                                <input type="email" id="invEmail" placeholder="sipho@example.co.za">
+                            </div>
+                            <div class="input-group">
+                                <label>WhatsApp Number</label>
+                                <input type="text" id="invWhatsapp" placeholder="+27 83 555 1234">
+                            </div>
+                            <div class="input-group">
+                                <label>Item Description</label>
+                                <input type="text" id="invDesc" placeholder="Custom Branded Corporate Banner">
+                            </div>
+                            <div class="input-group">
+                                <label>Custom Price (ZAR)</label>
+                                <input type="number" id="invPrice" placeholder="1500.00">
+                            </div>
+                        </div>
+                        <button onclick="generateCustomInvoice()" style="background: var(--acc-500); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px;"><i class="fa-solid fa-file-pdf"></i> Generate PDF & Fire via WhatsApp API</button>
+                    </div>
+
+                    <!-- TAB 5: EMPLOYEE RBAC SETTINGS -->
+                    <div id="paneRbac" class="tab-pane">
+                        <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--pri-900);">Role-Based Access Control (RBAC) & Boundary Switches</h4>
+                        <p style="font-size: 13px; color: var(--n-600); margin-bottom: 16px;">Toggle employee permissions. Staff cannot view master profit margins or banking routing codes.</p>
+                        <div style="background: var(--n-50); padding: 16px; border-radius: 10px; border: 1px solid var(--n-200); display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong>Staff Member: Thabo Mokoena (Employee Tier)</strong>
+                                <div style="font-size:12px; color:var(--n-600);">Permissions: Order fulfillment & catalog updates only</div>
+                            </div>
+                            <span style="font-size:11px; background:oklch(90% 0.05 240); color:var(--pri-800); padding:4px 8px; border-radius:6px; font-weight:600;">Restricted</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIER 3 MARKETPLACE VENDOR SINGLE-VIEW CONTAINER -->
+            <div id="vendorSingleViewContainer" class="card-box" style="display: none;">
+                <h3><i class="fa-solid fa-store" style="color:var(--acc-500);"></i> Marketplace Vendor Single-View Mobile Dashboard</h3>
+                <p style="font-size: 13px; color: var(--n-600); margin-bottom: 20px;">Strictly restricted view. You only see your own orders, pending payout stats, and specific inventory.</p>
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div style="background: var(--n-50); padding: 16px; border-radius: 10px; border: 1px solid var(--n-200);">
+                        <div style="font-size: 11px; color: var(--n-600); text-transform: uppercase;">Your Pending Payout</div>
+                        <div style="font-size: 22px; font-weight: 800; color: var(--pri-900);">R 3,450.00</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Local database storage simulation for user accounts and their websites
+        let registeredAccounts = JSON.parse(localStorage.getItem('mawebs_accounts') || '[]');
+        let currentActiveUser = null;
+        let pendingSiteName = "";
+        let pendingSiteUrl = "";
+
+        // Modal Controls
+        function openAuthModal(tab) {
+            document.getElementById('authModalOverlay').classList.add('active');
+            switchAuthTab(tab);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModalOverlay').classList.remove('active');
+        }
+
+        function switchAuthTab(tab) {
+            const signupTab = document.getElementById('tabSignupBtn');
+            const loginTab = document.getElementById('tabLoginBtn');
+            const signupForm = document.getElementById('signupForm');
+            const loginForm = document.getElementById('loginForm');
+
+            if (tab === 'signup') {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+            } else {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+            }
+        }
+
+        // Registration Logic: Captures and saves user credentials so they can sign in again
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('suName').value.trim();
+            const email = document.getElementById('suEmail').value.trim().toLowerCase();
+            const password = document.getElementById('suPassword').value;
+            const tier = document.getElementById('suTier').value;
+
+            const existingUser = registeredAccounts.find(acc => acc.email === email);
+            if (existingUser) {
+                alert("An account with this email already exists. Please sign in instead.");
+                switchAuthTab('login');
+                return;
+            }
+
+            // Starts with zero websites as requested
+            const newUser = {
+                name: name,
+                email: email,
+                password: password,
+                tier: tier,
+                websites: [] 
+            };
+
+            registeredAccounts.push(newUser);
+            localStorage.setItem('mawebs_accounts', JSON.stringify(registeredAccounts));
+
+            currentActiveUser = newUser;
+            alert("Registration successful! Your account has been saved. You can now sign in anytime.");
+            closeAuthModal();
+            enterAdminDashboard();
+        }
+
+        // Login Logic: Rejects users who did not create an account
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('liEmail').value.trim().toLowerCase();
+            const password = document.getElementById('liPassword').value;
+
+            const foundUser = registeredAccounts.find(acc => acc.email === email && acc.password === password);
+            
+            if (!foundUser) {
+                alert("Access Denied: Account not found or incorrect credentials. Users who did not create an account cannot sign in.");
+                return;
+            }
+
+            currentActiveUser = foundUser;
+            closeAuthModal();
+            enterAdminDashboard();
+        }
+
+        function enterAdminDashboard() {
+            document.getElementById('landingPageView').style.display = 'none';
+            document.getElementById('adminDashboardView').style.display = 'block';
+
+            document.getElementById('userGreetingDisplay').innerText = `Welcome, ${currentActiveUser.name}`;
+            document.getElementById('userRoleBadge').innerText = `Tier: ${currentActiveUser.tier.toUpperCase()}`;
+
+            if (currentActiveUser.tier === 'vendor') {
+                document.getElementById('masterAdminContainer').style.display = 'none';
+                document.getElementById('vendorSingleViewContainer').style.display = 'block';
+            } else {
+                document.getElementById('masterAdminContainer').style.display = 'block';
+                document.getElementById('vendorSingleViewContainer').style.display = 'none';
+                renderWebsites();
+            }
+        }
+
+        function logoutAdmin() {
+            currentActiveUser = null;
+            document.getElementById('adminDashboardView').style.display = 'none';
+            document.getElementById('landingPageView').style.display = 'block';
+        }
+
+        // Website addition workflow starting from zero websites
+        function handleAddWebsiteClick() {
+            const siteName = prompt("Enter your Website / Store Name:");
+            if (!siteName) return;
+            const siteUrl = prompt("Enter Domain URL (e.g., https://mystore.co.za):", "https://");
+            if (!siteUrl) return;
+
+            // If user already has 1 or more websites, trigger the fake PayFast paygate R50 fee
+            if (currentActiveUser.websites.length >= 1) {
+                pendingSiteName = siteName;
+                pendingSiteUrl = siteUrl;
+                document.getElementById('payModalOverlay').classList.add('active');
+            } else {
+                // First website is added directly
+                currentActiveUser.websites.push({ name: siteName, url: siteUrl, status: "Active (Free Slot)" });
+                saveUserData();
+                renderWebsites();
+            }
+        }
+
+        function closePayModal() {
+            document.getElementById('payModalOverlay').classList.remove('active');
+            pendingSiteName = "";
+            pendingSiteUrl = "";
+        }
+
+        // Fake PayGate confirmation after R50 payment simulation
+        function confirmWebsitePayment() {
+            alert("PayFast Sandbox Gateway: Payment of R 50.00 successful! Extra multi-tenant domain partition generated.");
+            currentActiveUser.websites.push({ name: pendingSiteName, url: pendingSiteUrl, status: "Active (Paid Slot)" });
+            saveUserData();
+            closePayModal();
+            renderWebsites();
+        }
+
+        function saveUserData() {
+            const index = registeredAccounts.findIndex(acc => acc.email === currentActiveUser.email);
+            if (index !== -1) {
+                registeredAccounts[index] = currentActiveUser;
+                localStorage.setItem('mawebs_accounts', JSON.stringify(registeredAccounts));
+            }
+        }
+
+        function renderWebsites() {
+            const container = document.getElementById('websitesListContainer');
+            container.innerHTML = '';
+            
+            const countEl = document.getElementById('domainCountDisplay');
+            if (countEl) countEl.innerText = `${currentActiveUser.websites.length} Connected`;
+
+            if (currentActiveUser.websites.length === 0) {
+                container.innerHTML = `<div style="font-size:13px; color:var(--n-600); padding: 12px; background:var(--n-50); border-radius:8px; text-align:center;">You currently have zero websites connected. Click "Add Website" above to plug in your store.</div>`;
+                return;
+            }
+
+            currentActiveUser.websites.forEach((site, index) => {
+                container.innerHTML += `
+                    <div class="website-item">
+                        <div>
+                            <strong>${site.name}</strong>
+                            <div style="font-size:12px; color:var(--n-600);">${site.url}</div>
+                        </div>
+                        <div style="display:flex; gap:12px; align-items:center;">
+                            <span style="font-size:11px; background:oklch(90% 0.05 150); color:oklch(40% 0.15 150); padding:4px 8px; border-radius:6px; font-weight:600;">${site.status}</span>
+                            <button onclick="openWebsiteDashboard('${site.name}')" style="background:var(--pri-900); color:white; border:none; padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;">Open Dashboard</button>
+                            <button onclick="removeWebsite(${index})" style="background:none; border:none; color:oklch(60% 0.2 25); cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function removeWebsite(index) {
+            currentActiveUser.websites.splice(index, 1);
+            saveUserData();
+            renderWebsites();
+        }
+
+        // Allows users to click and view everything on their added website dashboard
+        function openWebsiteDashboard(siteName) {
+            document.getElementById('websitesListContainer').parentElement.style.display = 'none';
+            document.getElementById('dedicatedWebsiteSection').style.display = 'block';
+            document.getElementById('activeWebsiteTitleLabel').innerText = `Managing Store: ${siteName}`;
+        }
+
+        function closeDedicatedView() {
+            document.getElementById('dedicatedWebsiteSection').style.display = 'none';
+            document.getElementById('websitesListContainer').parentElement.style.display = 'block';
+        }
+
+        function switchSiteTab(tabKey, event) {
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(p => p.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.site-tab-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+
+            if (tabKey === 'financial') {
+                document.getElementById('paneFinancial').classList.add('active');
+            } else if (tabKey === 'orders') {
+                document.getElementById('paneOrders').classList.add('active');
+            } else if (tabKey === 'approval') {
+                document.getElementById('paneApproval').classList.add('active');
+            } else if (tabKey === 'invoice') {
+                document.getElementById('paneInvoice').classList.add('active');
+            } else if (tabKey === 'rbac') {
+                document.getElementById('paneRbac').classList.add('active');
+            }
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        function generateCustomInvoice() {
+            const name = document.getElementById('invCustomer').value;
+            const price = document.getElementById('invPrice').value;
+            const whatsapp = document.getElementById('invWhatsapp').value;
+
+            if (!name || !price || !whatsapp) {
+                alert("Please fill in all custom invoice fields.");
+                return;
+            }
+
+            alert(`PDF invoice compiled and fired to ${whatsapp} via official WhatsApp Business API!`);
+        }
+    </script>
+</body>
+</html>
